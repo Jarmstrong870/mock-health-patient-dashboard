@@ -16,6 +16,7 @@ console.log(` Connected to SQLite database at ${dbPath}`);
 // ---------------------------------------------------------------------------
 // - id: unique identifier for each user
 // - username: staff login username (must be unique)
+// - email: staff work email (must be unique)
 // - password: hashed password (we NEVER store plain text)
 // - created_at: timestamp of when account was created
 // ---------------------------------------------------------------------------
@@ -23,6 +24,7 @@ db.prepare(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE,
+    email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
@@ -35,11 +37,11 @@ console.log(" Users table is ready (or already exists).");
 // ---------------------------------------------------------------------------
 
 // Function to add a new user
-function addUser(username, hashedPassword) {
+function addUser(username, email, hashedPassword) {
   const stmt = db.prepare(
-    "INSERT INTO users (username, password) VALUES (?, ?)"
+    "INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
   );
-  return stmt.run(username, hashedPassword); // returns info about the insert
+  return stmt.run(username, email, hashedPassword); // returns info about the insert
 }
 
 // Function to find a user by username
@@ -48,8 +50,15 @@ function findUserByUsername(username) {
   return stmt.get(username); // .get() returns one row or undefined
 }
 
+// (Optional) Function to find a user by email
+function findUserByEmail(email) {
+  const stmt = db.prepare("SELECT * FROM users WHERE email = ?");
+  return stmt.get(email);
+}
+
 // Export functions so they can be used in index.js (backend routes)
 module.exports = {
   addUser,
   findUserByUsername,
+  findUserByEmail,
 };

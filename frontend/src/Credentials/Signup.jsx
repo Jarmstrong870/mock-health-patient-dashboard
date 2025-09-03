@@ -1,38 +1,52 @@
+// Import React and hooks
 import React, { useState } from "react";
-import "./Signup.css"; // NHS-style CSS
+import { useNavigate } from "react-router-dom"; 
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"; // eye icons
+import "./Home.css";
 
 function Signup() {
+  // Form state
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");        // NEW: email field
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Handle signup submission
+  const navigate = useNavigate();
+
+  // Handle signup
   const handleSignup = async (e) => {
     e.preventDefault();
+
     try {
       const res = await fetch("http://localhost:5000/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, email, password }), // include email
       });
+
       const data = await res.json();
-      setMessage(data.message);
+
+      if (data.success) {
+        navigate("/login");
+      } else {
+        setMessage(data.message);
+      }
     } catch (err) {
       setMessage("Error connecting to server.");
     }
   };
 
   return (
-    <div className="signup-container">
-      <div className="signup-card">
-        {/* NHS-style heading */}
+    <div className="form-container">
+      <div className="form-card">
         <h2>Staff Account Registration</h2>
-        <p className="signup-subtext">
+        <p className="form-subtext">
           Staff accounts are required to access the patient dashboard.
         </p>
 
-        {/* Signup form */}
-        <form onSubmit={handleSignup} className="signup-form">
+        <form onSubmit={handleSignup} className="form">
+          {/* Username */}
           <label>Username</label>
           <input
             type="text"
@@ -42,24 +56,44 @@ function Signup() {
             required
           />
 
-          <label>Password</label>
+          {/* Email */}
+          <label>Work Email</label>
           <input
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="email"
+            placeholder="Enter work email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
 
-          {/* NHS green button */}
+          {/* Password */}
+          <label>Password</label>
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="password-input"
+            />
+            <span
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </span>
+          </div>
+
+          {/* Submit */}
           <button type="submit">Continue</button>
         </form>
 
-        {/* Feedback message */}
-        {message && <p className="signup-message">{message}</p>}
+        {/* Feedback */}
+        {message && <p className="form-message">{message}</p>}
 
         {/* Switch to login */}
-        <button className="signup-switch">
+        <button className="form-switch" onClick={() => navigate("/login")}>
           Already have an account? Login
         </button>
       </div>
