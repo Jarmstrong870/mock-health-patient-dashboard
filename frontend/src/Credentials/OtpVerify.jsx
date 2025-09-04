@@ -1,18 +1,23 @@
-// Import React and the state hook
+// Import React and hooks
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import "./Home.css"; // reuse form styles
 
+function OtpVerify() {
+  const [otp, setOtp] = useState("");
+  const [message, setMessage] = useState("");
 
-// OTP Verification component - second step of login
-function OtpVerify({ username, onLoginSuccess }) {
-  const [otp, setOtp] = useState("");     // Store OTP input
-  const [message, setMessage] = useState(""); // Feedback message
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // ✅ Grab username passed from Login.jsx
+  const { username } = location.state || {};
 
   // Handle OTP verification
   const handleVerify = async (e) => {
     e.preventDefault();
 
     try {
-      // Send username + OTP to backend
       const res = await fetch("http://localhost:5000/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -22,9 +27,10 @@ function OtpVerify({ username, onLoginSuccess }) {
       const data = await res.json();
 
       if (data.success) {
-        onLoginSuccess(); //  Success → move to dashboard
+        // ✅ OTP correct → navigate to dashboard
+        navigate("/dashboard");
       } else {
-        setMessage(data.message); //  Wrong OTP
+        setMessage(data.message);
       }
     } catch (err) {
       setMessage("Error connecting to server.");
@@ -32,23 +38,32 @@ function OtpVerify({ username, onLoginSuccess }) {
   };
 
   return (
-    <div>
-      <h2>Enter OTP</h2>
-      <form onSubmit={handleVerify}>
-        {/* OTP input */}
-        <input
-          type="text"
-          placeholder="Enter OTP"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          required
-        />
+    <div className="form-container">
+      <div className="form-card">
+        <h2>OTP Verification</h2>
+        <p className="form-subtext">
+          Enter the one-time password sent to your registered email.
+        </p>
 
-        <button type="submit">Verify</button>
-      </form>
+        <form onSubmit={handleVerify} className="form">
+          <label>One-Time Password</label>
+          <input
+            type="text"
+            placeholder="Enter OTP"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            required
+          />
 
-      {/* Show message */}
-      {message && <p>{message}</p>}
+          <button type="submit">Verify OTP</button>
+        </form>
+
+        {message && <p className="form-message">{message}</p>}
+
+        <button className="form-switch" onClick={() => navigate("/login")}>
+          Back to Login
+        </button>
+      </div>
     </div>
   );
 }

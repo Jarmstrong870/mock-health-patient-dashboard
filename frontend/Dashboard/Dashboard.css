@@ -1,0 +1,56 @@
+/* Dashboard container */
+.dashboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background: #f0f4f5; /* NHS light grey */
+    margin: 0;
+  }
+  
+  /* Center card */
+  .dashboard-card {
+    background: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 800px;
+    text-align: left;
+  }
+  
+  /* Heading */
+  .dashboard-card h2 {
+    color: #212b32; /* NHS dark text */
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+    font-weight: bold;
+  }
+  
+  /* Subtext */
+  .dashboard-subtext {
+    color: #4c6272; /* NHS grey */
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
+  
+  /* Content grid */
+  .dashboard-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  /* Boxes */
+  .dashboard-box {
+    background: #e8f0f8; /* light NHS blue */
+    border: 2px solid #005eb8; /* NHS blue border */
+    padding: 1rem;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #212b32;
+  }
+  

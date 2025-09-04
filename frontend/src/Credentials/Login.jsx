@@ -26,9 +26,16 @@ function Login({ onOtpRequested }) {
       const data = await res.json();
 
       if (data.success) {
-        setMessage("OTP generated. Check console (mock).");
+        setMessage("OTP generated. Please check your email.");
         console.log("Mock OTP:", data.otp);
-        onOtpRequested(username);
+
+        //  Navigate to OTP verification page with username
+        navigate("/otp", { state: { username } });
+
+
+        if (onOtpRequested) {
+          onOtpRequested(username);
+        }
       } else {
         setMessage(data.message);
       }
